@@ -1,5 +1,14 @@
 package ar.com.ada.creditos.excepciones;
 
-public class ClienteEdadException {
-    
+import ar.com.ada.creditos.entities.*;
+
+/**
+ * ClienteEdadException
+ */
+public class ClienteEdadException extends ClienteInfoException {
+
+    public ClienteEdadException(Cliente cliente, String mensaje) {
+        super(cliente, mensaje);
+    }
+
 }
