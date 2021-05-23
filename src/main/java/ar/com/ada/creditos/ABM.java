@@ -7,15 +7,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
-import ar.com.ada.creditos.entities.*;
-import ar.com.ada.creditos.excepciones.*;
-import ar.com.ada.creditos.managers.*;
+import ar.com.ada.creditos.entities.Cliente;
+import ar.com.ada.creditos.entities.Prestamo;
+import ar.com.ada.creditos.excepciones.ClienteDNIException;
+import ar.com.ada.creditos.managers.ClienteManager;
+import ar.com.ada.creditos.managers.PrestamoManager;
 
 public class ABM {
 
     public static Scanner Teclado = new Scanner(System.in);
 
     protected ClienteManager ABMCliente = new ClienteManager();
+
+    protected PrestamoManager ABMPrestamo = new PrestamoManager();
 
     public void iniciar() throws Exception {
 
@@ -49,11 +53,19 @@ public class ABM {
                         break;
 
                     case 4:
-                        listar();
+                        listarClientes();
                         break;
 
                     case 5:
                         listarPorNombre();
+                        break;
+
+                    case 6:
+                        otorgarprestamo();
+                        break;
+
+                    case 7:
+                        listarPorPrestamo();
                         break;
 
                     default:
@@ -98,14 +110,14 @@ public class ABM {
         if (domAlternativo != null)
             cliente.setDireccionAlternativa(domAlternativo);
 
-        System.out.println("Ingrese fecha de nacimiento:");
+        System.out.println("Ingrese fecha de nacimiento:(dd/MM/yy)");
         Date fecha = null;
         DateFormat dateformatArgentina = new SimpleDateFormat("dd/MM/yy");
 
         fecha = dateformatArgentina.parse(Teclado.nextLine());
         cliente.setFechaNacimiento(fecha);
 
-        //Ponerle un prestamo de 10mil a un cliente recien creado.
+        // Ponerle un prestamo de 10mil a un cliente recien creado.
         Prestamo prestamo = new Prestamo();
 
         prestamo.setImporte(new BigDecimal(10000));
@@ -124,6 +136,30 @@ public class ABM {
          */
 
         System.out.println("Cliente generado con exito.  " + cliente);
+    }
+
+    public void otorgarprestamo() throws Exception {
+
+        System.out.println("Ingrese el nombre del cliente a otorgar el Prestamo:");
+        String nombre = Teclado.nextLine();
+
+        List<Cliente> clientes = ABMCliente.buscarPor(nombre);
+        for (Cliente cliente : clientes) {
+            mostrarCliente(cliente);
+
+            // * Prestamo pce = new Prestamo();// pce prestamo cliente existente
+            // pce.setImporte(new BigDecimal(10000));
+            // pce.setCuotas(5);
+            // pce.setFecha(new Date());
+            // pce.setFechaAlta(new Date());
+            // pce.setCliente(cliente);
+
+            // ABMPrestamo.create(pce);
+
+            // System.out.println("El Prestamo se ha otorgado exitoamente al cliente: " +
+            // cliente);
+
+        }
 
     }
 
@@ -234,7 +270,7 @@ public class ABM {
 
     }
 
-    public void listar() {
+    public void listarClientes() {
 
         List<Cliente> todos = ABMCliente.buscarTodos();
         for (Cliente c : todos) {
@@ -253,6 +289,17 @@ public class ABM {
         }
     }
 
+    public void listarPorPrestamo() { // intento de mostrar lista de prestamos
+
+        System.out.println("Ingrese el nombre:");
+        String nombre = Teclado.nextLine();
+
+    }
+
+    // List<Prestamo> prestamo = ABMPrestamo.buscarPor(nombre);
+    // for (Cliente cliente : pce) {
+    // mostrarCliente(cliente);
+
     public void mostrarCliente(Cliente cliente) {
 
         System.out.print("Id: " + cliente.getClienteId() + " Nombre: " + cliente.getNombre() + " DNI: "
@@ -268,15 +315,19 @@ public class ABM {
     }
 
     public static void printOpciones() {
-        System.out.println("=======================================");
+        System.out.println("===========================================================");
         System.out.println("");
         System.out.println("1. Para agregar un cliente.");
         System.out.println("2. Para eliminar un cliente.");
         System.out.println("3. Para modificar un cliente.");
         System.out.println("4. Para ver el listado.");
         System.out.println("5. Buscar un cliente por nombre especifico(SQL Injection)).");
+        System.out.println(
+                "6. Buscar un cliente por nombre especifico y otorgar un Prestamo de  $10.000.- (SQL Injection)).");
+        System.out.println("7. Para ver el listado de prestamos.");
+
         System.out.println("0. Para terminar.");
         System.out.println("");
-        System.out.println("=======================================");
+        System.out.println("===========================================================");
     }
 }
