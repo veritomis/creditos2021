@@ -10,6 +10,7 @@ import java.util.Scanner;
 import ar.com.ada.creditos.entities.Cliente;
 import ar.com.ada.creditos.entities.Prestamo;
 import ar.com.ada.creditos.excepciones.ClienteDNIException;
+import ar.com.ada.creditos.excepciones.ClienteNombreException;
 import ar.com.ada.creditos.managers.ClienteManager;
 import ar.com.ada.creditos.managers.PrestamoManager;
 
@@ -20,6 +21,8 @@ public class ABM {
     protected ClienteManager ABMCliente = new ClienteManager();
 
     protected PrestamoManager ABMPrestamo = new PrestamoManager();
+
+    // protected CancelacionManager ABMCancelacion = new CancelacionManager();
 
     public void iniciar() throws Exception {
 
@@ -41,6 +44,8 @@ public class ABM {
                             alta();
                         } catch (ClienteDNIException exdni) {
                             System.out.println("Error en el DNI. Indique uno valido");
+                        } catch (ClienteNombreException enombreexception) {
+                            System.out.println("Error en el Nombre. NO ha ingresado ninguno. Vuelva a intentarlo");
                         }
                         break;
 
@@ -61,11 +66,11 @@ public class ABM {
                         break;
 
                     case 6:
-                        otorgarprestamo();
+                        otorgarPrestamo();
                         break;
 
                     case 7:
-                        listarPorPrestamo();
+                        listarPrestamo();
                         break;
 
                     default:
@@ -136,30 +141,6 @@ public class ABM {
          */
 
         System.out.println("Cliente generado con exito.  " + cliente);
-    }
-
-    public void otorgarprestamo() throws Exception {
-
-        System.out.println("Ingrese el nombre del cliente a otorgar el Prestamo:");
-        String nombre = Teclado.nextLine();
-
-        List<Cliente> clientes = ABMCliente.buscarPor(nombre);
-        for (Cliente cliente : clientes) {
-            mostrarCliente(cliente);
-
-            // * Prestamo pce = new Prestamo();// pce prestamo cliente existente
-            // pce.setImporte(new BigDecimal(10000));
-            // pce.setCuotas(5);
-            // pce.setFecha(new Date());
-            // pce.setFechaAlta(new Date());
-            // pce.setCliente(cliente);
-
-            // ABMPrestamo.create(pce);
-
-            // System.out.println("El Prestamo se ha otorgado exitoamente al cliente: " +
-            // cliente);
-
-        }
 
     }
 
@@ -322,12 +303,95 @@ public class ABM {
         System.out.println("3. Para modificar un cliente.");
         System.out.println("4. Para ver el listado.");
         System.out.println("5. Buscar un cliente por nombre especifico(SQL Injection)).");
-        System.out.println(
-                "6. Buscar un cliente por nombre especifico y otorgar un Prestamo de  $10.000.- (SQL Injection)).");
+        System.out.println("6. Buscar un cliente por Id especifico y otorgar un Prestamo (SQL Injection)).");
         System.out.println("7. Para ver el listado de prestamos.");
 
         System.out.println("0. Para terminar.");
         System.out.println("");
         System.out.println("===========================================================");
     }
+
+    /*
+     * public void otorgarprestamo() throws Exception {
+     * 
+     * System.out.println("Ingrese el nombre del cliente a otorgar el Prestamo:");
+     * String nombre = Teclado.nextLine();
+     * 
+     * List<Cliente> clientes = ABMCliente.buscarPor(nombre); for (Cliente cliente :
+     * clientes) { mostrarCliente(cliente);
+     * 
+     * // * Prestamo pce = new Prestamo();// pce prestamo cliente existente //
+     * pce.setImporte(new BigDecimal(10000)); // pce.setCuotas(5); //
+     * pce.setFecha(new Date()); // pce.setFechaAlta(new Date()); //
+     * pce.setCliente(cliente);
+     * 
+     * // ABMPrestamo.create(pce);
+     * 
+     * // System.out.println("El Prestamo se ha otorgado exitoamente al cliente: " +
+     * // cliente);
+     */
+
+    public void otorgarPrestamo() {
+
+        System.out.println("Ingrese el Id del Cliente");
+        int ClienteID = Teclado.nextInt();
+        Cliente cl = ABMCliente.read(ClienteID);
+        if (cl == null) {
+            System.out.println("El cliente no existe");
+            return;
+        }
+        Prestamo p = new Prestamo();
+        p.setCliente(cl);
+        System.out.println("Ingrese el monto del préstamo");
+        p.setImporte(Teclado.nextBigDecimal());
+        System.out.println("Ingrese la cantidad de cuotas");
+        p.setCuotas(Teclado.nextInt());
+        Teclado.nextLine();
+        System.out.println("Ingrese la fecha");
+    }
+
+    /*
+     * String expectedPattern = "dd/mm/yyyy"; SimpleDateFormat formatter = new
+     * SimpleDateFormat(expectedPattern); try { Date fecha =
+     * formatter.parse(Teclado.nextLine()); p.setFecha(fecha); } catch
+     * (ParseException e) {
+     * System.out.println("Hay un error en la fecha. Vuelva a intentarlo"); return;
+     * }
+     * 
+     * p.setFechaAlta(new Date()); ABMPrestamo.create(p);// Paso final para guardar
+     * todo en la base de datos a traves del manager
+     * System.out.println("Se ha creado su préstamo con éxito");
+     */
+
+    public void listarPrestamo() {
+        List<Prestamo> todos = ABMPrestamo.buscarTodos();
+        for (Prestamo p : todos) {
+            mostrarPrestamo(p);
+
+        }
+    }
+
+    private void mostrarPrestamo(Prestamo p) {
+
+        System.out.println("Id: " + p.getPrestamoId() + " Cliente " + p.getCliente().getNombre() + " Importe: "
+                + p.getImporte() + " Cuotas: " + p.getCuotas() + " Fecha de alta: " + p.getFechaAlta());
+
+    }
+
+    public void listarPrestamoPorCliente() {
+        List<Cliente> todos = ABMCliente.buscarTodos();
+        for (Cliente cliente : todos) {
+            mostrarPrestamo(cliente);
+
+        }
+    }
+
+    private void mostrarPrestamo(Cliente cliente) {
+
+        for (Prestamo p : cliente.getPrestamos()) {
+            mostrarPrestamo(p);
+        }
+
+    }
+
 }
