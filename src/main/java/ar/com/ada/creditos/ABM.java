@@ -2,6 +2,7 @@ package ar.com.ada.creditos;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -29,6 +30,7 @@ public class ABM {
         try {
 
             ABMCliente.setup();
+            ABMPrestamo.setup();
 
             printOpciones();
 
@@ -311,27 +313,8 @@ public class ABM {
         System.out.println("===========================================================");
     }
 
-    /*
-     * public void otorgarprestamo() throws Exception {
-     * 
-     * System.out.println("Ingrese el nombre del cliente a otorgar el Prestamo:");
-     * String nombre = Teclado.nextLine();
-     * 
-     * List<Cliente> clientes = ABMCliente.buscarPor(nombre); for (Cliente cliente :
-     * clientes) { mostrarCliente(cliente);
-     * 
-     * // * Prestamo pce = new Prestamo();// pce prestamo cliente existente //
-     * pce.setImporte(new BigDecimal(10000)); // pce.setCuotas(5); //
-     * pce.setFecha(new Date()); // pce.setFechaAlta(new Date()); //
-     * pce.setCliente(cliente);
-     * 
-     * // ABMPrestamo.create(pce);
-     * 
-     * // System.out.println("El Prestamo se ha otorgado exitoamente al cliente: " +
-     * // cliente);
-     */
-
-    public void otorgarPrestamo() {
+    
+    public void otorgarPrestamo() throws ParseException {
 
         System.out.println("Ingrese el Id del Cliente");
         int ClienteID = Teclado.nextInt();
@@ -347,21 +330,21 @@ public class ABM {
         System.out.println("Ingrese la cantidad de cuotas");
         p.setCuotas(Teclado.nextInt());
         Teclado.nextLine();
-        System.out.println("Ingrese la fecha");
+        System.out.println("Ingrese la fecha de otorgamiento del credito (dd/MM/yy)");
+        Date fecha = null;
+        DateFormat dateformatArgentina = new SimpleDateFormat("dd/MM/yy");
+
+        fecha = dateformatArgentina.parse(Teclado.nextLine());
+        p.setFecha(fecha);
+        p.setFechaAlta(new Date());
+
+        ABMPrestamo.create(p);
+
+        System.out.println("El Prestamo se ha otorgado exitoamente al cliente: " + cl);
     }
 
-    /*
-     * String expectedPattern = "dd/mm/yyyy"; SimpleDateFormat formatter = new
-     * SimpleDateFormat(expectedPattern); try { Date fecha =
-     * formatter.parse(Teclado.nextLine()); p.setFecha(fecha); } catch
-     * (ParseException e) {
-     * System.out.println("Hay un error en la fecha. Vuelva a intentarlo"); return;
-     * }
-     * 
-     * p.setFechaAlta(new Date()); ABMPrestamo.create(p);// Paso final para guardar
-     * todo en la base de datos a traves del manager
-     * System.out.println("Se ha creado su préstamo con éxito");
-     */
+    
+     
 
     public void listarPrestamo() {
         List<Prestamo> todos = ABMPrestamo.buscarTodos();
