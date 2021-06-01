@@ -14,6 +14,7 @@ import ar.com.ada.creditos.excepciones.ClienteDNIException;
 import ar.com.ada.creditos.excepciones.ClienteNombreException;
 import ar.com.ada.creditos.managers.ClienteManager;
 import ar.com.ada.creditos.managers.PrestamoManager;
+import ar.com.ada.creditos.entities.Prestamo.EstadoPrestamoEnum;
 
 public class ABM {
 
@@ -132,6 +133,8 @@ public class ABM {
         prestamo.setFecha(new Date());
         prestamo.setFechaAlta(new Date());
         prestamo.setCliente(cliente);
+        prestamo.setEstadoId(EstadoPrestamoEnum.APROBADO);
+
 
         ABMCliente.create(cliente);
 
