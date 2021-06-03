@@ -24,7 +24,7 @@ public class ABM {
 
     protected PrestamoManager ABMPrestamo = new PrestamoManager();
 
-    // protected CancelacionManager ABMCancelacion = new CancelacionManager();
+    //protected CancelacionManager ABMCancelacion = new CancelacionManager();
 
     public void iniciar() throws Exception {
 
@@ -32,6 +32,7 @@ public class ABM {
 
             ABMCliente.setup();
             ABMPrestamo.setup();
+           // ABMCancelacion.setup();
 
             printOpciones();
 
@@ -118,9 +119,9 @@ public class ABM {
         if (domAlternativo != null)
             cliente.setDireccionAlternativa(domAlternativo);
 
-        System.out.println("Ingrese fecha de nacimiento:(dd/MM/yy)");
+        System.out.println("Ingrese fecha de nacimiento:(dd/MM/YY)");
         Date fecha = null;
-        DateFormat dateformatArgentina = new SimpleDateFormat("dd/MM/yy");
+        DateFormat dateformatArgentina = new SimpleDateFormat("dd/MM/YY");
 
         fecha = dateformatArgentina.parse(Teclado.nextLine());
         cliente.setFechaNacimiento(fecha);
@@ -303,12 +304,13 @@ public class ABM {
     public static void printOpciones() {
         System.out.println("===========================================================");
         System.out.println("");
+        System.out.println("INGRESE NUMERO DE OPCION A REALIZAR");
         System.out.println("1. Para agregar un cliente.");
         System.out.println("2. Para eliminar un cliente.");
         System.out.println("3. Para modificar un cliente.");
         System.out.println("4. Para ver el listado.");
         System.out.println("5. Buscar un cliente por nombre especifico(SQL Injection)).");
-        System.out.println("6. Buscar un cliente por Id especifico y otorgar un Prestamo (SQL Injection)).");
+        System.out.println("6. Otorgar un Prestamo a un cliente existente por Id (SQL Injection)).");
         System.out.println("7. Para ver el listado de prestamos.");
 
         System.out.println("0. Para terminar.");
@@ -340,6 +342,7 @@ public class ABM {
         fecha = dateformatArgentina.parse(Teclado.nextLine());
         p.setFecha(fecha);
         p.setFechaAlta(new Date());
+        p.setEstadoId(EstadoPrestamoEnum.APROBADO);
 
         ABMPrestamo.create(p);
 
